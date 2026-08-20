@@ -176,6 +176,7 @@ pip install -r requirements.txt -r requirements-dev.txt -i https://pypi.tuna.tsi
 | rsync 成功但 docker build 失败 | 依赖下载、镜像源、Dockerfile |
 | 服务器本机 curl 通,外网打不开 | 安全组/防火墙是否放行端口(含回退端口段) |
 | CD 日志二次报错 | 部署脚本是否缺 `set -e` |
+| appleboy/ssh-action 配了 rsync/source/target 但 warning "Unexpected input(s)"、文件没同步 | 版本太老:rsync 输入从 v1.2 起才支持,升到 `@v1.2.5`;`--log-failed` 看 warning 与 `err:` 行 |
 
 ---
 

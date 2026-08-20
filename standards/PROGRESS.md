@@ -49,7 +49,8 @@
 
 ## 已知坑 (GOTCHAS)
 
-- 暂无真实故障。预判:Windows 控制台编码、CI 干净 runner 上数据路径、docker 端口占用(exit 125)——见 05 标准第 7 节。
+- **CD 首次部署失败(18s 红)**:PR #2 合并触发 CD,`cd /opt/banksys_lixiaohua: No such file or directory`。根因:`appleboy/ssh-action@v1.0.3` 的合法输入里没有 `rsync/source/target/rsync_args`(warning 列出合法输入),rsync 未执行,文件没同步到服务器,SSH 连接本身是通的。解决:升级 `@v1.2.5`(v1.2+ 才支持 rsync 输入)。验证:重新合并修复 PR 后看 CD 健康检查。已写入 05 标准 §7。
+- 预判:Windows 控制台编码、CI 干净 runner 上数据路径、docker 端口占用(exit 125)——见 05 标准第 7 节。
 
 ---
 
