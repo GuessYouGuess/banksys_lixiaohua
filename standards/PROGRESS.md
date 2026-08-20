@@ -8,10 +8,10 @@
 
 ## 当前状态 (最后更新: 2026-08-20 · by AI)
 
-- **阶段**:`初始化(六步流程第③步:feature/1-init 骨架模块完成,本地自检全绿,待确认后推送 PR)`
-- **上一步完成**:Secrets 已配齐(gh secret list 核对通过);开分支 `feature/1-init`;完成工程骨架模块:pyproject/requirements 拆分、最小 Streamlit 入口 + core 常量、Dockerfile(8888 + PIP_INDEX_URL + /_stcore/health)、ci.yml、cd.yml(rsync+端口回退+健康检查)、README;本地自检全绿:ruff format/check ✅,pytest 6 passed 覆盖率 94% ✅,冒烟:健康检查 ok、首页 200 ✅。
-- **下一步 (TODO 第一条)**:人类确认模块 → 推送分支 → 发 PR(feature/1-init)。
-- **阻塞项**:无(等人类确认)。
+- **阶段**:`六步流程第⑤步完成:PR #2 CI 全绿,等待人工审核合并(第⑥步)`
+- **上一步完成**:推送 feature/1-init(SSH 443 通道,HTTPS 被墙);Issue #1 + PR #2 已建;CI 两轮全绿(1m41s/1m37s,含 docker build);升级 checkout@v5 / setup-python@v6 消除 Node20 弃用警告。
+- **下一步 (TODO 第一条)**:人类 Review PR #2 → 合并 main → CD 自动部署(第⑥步)。
+- **阻塞项**:等人类审核合并;网络注意:github.com 主站被墙,git 用 SSH 443(ssh.github.com:443)已生效。
 
 ---
 
