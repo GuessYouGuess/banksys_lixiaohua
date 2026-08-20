@@ -176,7 +176,8 @@ pip install -r requirements.txt -r requirements-dev.txt -i https://pypi.tuna.tsi
 | rsync 成功但 docker build 失败 | 依赖下载、镜像源、Dockerfile |
 | 服务器本机 curl 通,外网打不开 | 安全组/防火墙是否放行端口(含回退端口段) |
 | CD 日志二次报错 | 部署脚本是否缺 `set -e` |
-| appleboy/ssh-action 配了 rsync/source/target 但 warning "Unexpected input(s)"、文件没同步 | 版本太老:rsync 输入从 v1.2 起才支持,升到 `@v1.2.5`;`--log-failed` 看 warning 与 `err:` 行 |
+| ssh-action 配 rsync/source/target 报 "Unexpected input(s)"、文件没同步 | `appleboy/ssh-action` 的 `sync` 是"多主机同步执行命令",**不传文件**;文件同步用 `appleboy/scp-action`(`source` 逗号分隔、`target`、`rm: true`),先 ssh-action `mkdir -p` 目标目录,再 scp 上传,最后 ssh-action 跑部署脚本 |
+| CD 报 `cd: /opt/...: No such file or directory` | 文件没同步到服务器;按上一行改三段式(建目录→scp→部署);升级 action 前先用 `gh api repos/<owner>/<repo>/contents/action.yml?ref=<tag>` 核实输入 |
 
 ---
 

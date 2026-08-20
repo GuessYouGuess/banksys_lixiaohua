@@ -1,4 +1,6 @@
 # CD:合并 main 后自动部署到服务器,健康检查通过才算成功
+# 文件同步用 appleboy/scp-action(source/target),ssh-action 只跑远程命令
+# (ssh-action 的 sync 是"多主机同步执行命令",不传文件)
 name: CD
 
 on:
@@ -12,16 +14,32 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Prepare deploy dir on server
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            mkdir -p /opt/banksys_lixiaohua
+
+      - name: Copy project files to server
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "app,models,data,requirements.txt,requirements-dev.txt,pyproject.toml,Dockerfile,.dockerignore,README.md"
+          target: "/opt/banksys_lixiaohua"
+          rm: true
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          rsync: true
-          source: "./"
-          target: "/opt/banksys_lixiaohua"
-          rsync_args: "--exclude=.git --exclude=__pycache__ --exclude=*.pyc --exclude=.pytest_cache --exclude=.ruff_cache --exclude=standards"
           script: |
             set -e
             cd /opt/banksys_lixiaohua

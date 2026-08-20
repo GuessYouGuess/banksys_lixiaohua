@@ -49,7 +49,7 @@
 
 ## 已知坑 (GOTCHAS)
 
-- **CD 首次部署失败(18s 红)**:PR #2 合并触发 CD,`cd /opt/banksys_lixiaohua: No such file or directory`。根因:`appleboy/ssh-action@v1.0.3` 的合法输入里没有 `rsync/source/target/rsync_args`(warning 列出合法输入),rsync 未执行,文件没同步到服务器,SSH 连接本身是通的。解决:升级 `@v1.2.5`(v1.2+ 才支持 rsync 输入)。验证:重新合并修复 PR 后看 CD 健康检查。已写入 05 标准 §7。
+- **CD 部署失败两次(18s/14s 红)**:PR #2/#3 合并触发 CD 均失败,`cd /opt/banksys_lixiaohua: No such file or directory`。根因:① `appleboy/ssh-action@v1.0.3` 无 `rsync/source/target` 输入,文件未同步;② 误判"升级 v1.2.5 支持 rsync",实际 v1.2.5 的 `sync` 是"多主机同步执行命令"、不传文件(warning 列出了全部合法输入,升级前应先 `gh api .../action.yml` 核实)。解决:改用三段式——ssh-action `mkdir -p /opt/banksys_lixiaohua` → `appleboy/scp-action@v1.0.0` 传文件(`source` 逗号分隔、`rm: true`)→ ssh-action 跑部署脚本。验证:合并 fix/3-cd-scp-action 后看 CD 健康检查。已写入 05 §7(含纠正)。
 - 预判:Windows 控制台编码、CI 干净 runner 上数据路径、docker 端口占用(exit 125)——见 05 标准第 7 节。
 
 ---
