@@ -1,0 +1,21 @@
+[project]
+name = "banksys_lixiaohua"
+version = "0.1.0"
+description = "银行营销认购预测系统:数据交互分析 + 在线预测"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = ["data", "models/artifacts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.coverage.run]
+source = ["app", "models"]
+omit = ["*/tests/*"]

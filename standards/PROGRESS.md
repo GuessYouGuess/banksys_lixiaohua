@@ -8,10 +8,10 @@
 
 ## 当前状态 (最后更新: 2026-08-20 · by AI)
 
-- **阶段**:`初始化(六步流程第 0 步:文档就绪,尚未建仓)`
-- **上一步完成**:按 standards/README 顺序读完 00/01/PROGRESS 与 02~06;查看数据(train 22500 行 / test 7500 行,目标列 `subscribe`);重填 `00-project-context.md`、`01-requirements.md`、本文件。
-- **下一步 (TODO 第一条)**:人类确认三份文档 → 进入六步流程第①步(建仓 + 配 Secrets)。
-- **阻塞项**:无(等人类确认文档;建仓后需人类配 GitHub Secrets:`SSH_PRIVATE_KEY` / `SSH_HOST` / `SSH_USER`)。
+- **阶段**:`六步流程第⑤步完成:PR #2 CI 全绿,等待人工审核合并(第⑥步)`
+- **上一步完成**:推送 feature/1-init(SSH 443 通道,HTTPS 被墙);Issue #1 + PR #2 已建;CI 两轮全绿(1m41s/1m37s,含 docker build);升级 checkout@v5 / setup-python@v6 消除 Node20 弃用警告。
+- **下一步 (TODO 第一条)**:人类 Review PR #2 → 合并 main → CD 自动部署(第⑥步)。
+- **阻塞项**:等人类审核合并;网络注意:github.com 主站被墙,git 用 SSH 443(ssh.github.com:443)已生效。
 
 ---
 
@@ -21,14 +21,14 @@
 - [x] 填写 `00-project-context.md`(项目身份、技术栈、目录地图、质量门槛、部署取值)
 - [x] 填写 `01-requirements.md`(US-1~US-5 用户故事 + 验收标准)
 - [x] 初始化本文件(第一批 TODO)
-- [ ] **人类确认 00/01/PROGRESS**(✋ 确认门)
-- [ ] ① 建仓:创建开源仓库 `banksys_lixiaohua` + 最小引导提交;提示人类配 Secrets
-- [ ] ② 从 main 开 feature 分支(如 `feature/1-init`)
-- [ ] ③ 搭工程骨架:目录结构、requirements(+dev)、Dockerfile、.gitignore、README、ci.yml、cd.yml
+- [x] **人类确认 00/01/PROGRESS**(✋ 确认门通过)
+- [x] ① 建仓:创建开源仓库 `banksys_lixiaohua`(GuessYouGuess 账号)+ 最小引导提交;提示人类配 Secrets(✋ 确认门 1,进行中)
+- [x] ② 从 main 开 feature 分支 `feature/1-init`
+- [x] ③ 搭工程骨架:目录结构、requirements(+dev)、Dockerfile、.gitignore、README、ci.yml、cd.yml
 - [ ] ③ US-2 数据分析页面:`app/core/analysis.py` + 页面 + 测试
 - [ ] ③ US-3 离线训练管线:`models/train.py`(固定种子、class_weight、`--check-auc` 门禁)+ 产物 + 测试
 - [ ] ③ US-4 在线预测:`app/core/predictor.py` + 点选表单页面 + 测试
-- [ ] ④ 本地自检:`ruff format --check .` + `ruff check .` + `pytest --cov --cov-fail-under=80` + 模型门禁
+- [x] ④ 本地自检(骨架):ruff 全绿;pytest 6 passed 覆盖 94%;冒烟健康检查 ok
 - [ ] ⑤ 推送分支 + AI 发 PR + CI 复检(docker build 在 CI)
 - [ ] ⑥ 人工 Review → 人类合并 → CD 自动部署 → 健康检查 → 报端口
 - [ ] 会话结束前更新本文件

@@ -1,0 +1,52 @@
+# CD:合并 main 后自动部署到服务器,健康检查通过才算成功
+name: CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: deploy to server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          rsync: true
+          source: "./"
+          target: "/opt/banksys_lixiaohua"
+          rsync_args: "--exclude=.git --exclude=__pycache__ --exclude=*.pyc --exclude=.pytest_cache --exclude=.ruff_cache --exclude=standards"
+          script: |
+            set -e
+            cd /opt/banksys_lixiaohua
+
+            # 构建镜像(服务器可用国内源)
+            docker build --build-arg PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple -t banksys_lixiaohua:latest .
+
+            # 端口:容器内固定 8888,主机 8888~8898 自动找空闲端口
+            port_in_use() {
+              ss -ltnH 2>/dev/null | grep -q ":$1 " && return 0
+              docker ps --format "{{.Ports}}" 2>/dev/null | grep -q ":$1->" && return 0
+              return 1
+            }
+            PORT=""
+            for p in $(seq 8888 8898); do
+              if ! port_in_use "$p"; then PORT="$p"; break; fi
+            done
+            [ -z "$PORT" ] && { echo ">> 预留端口区间已全部占用,部署中止"; exit 1; }
+            echo ">> 部署到主机端口 $PORT"
+
+            # 幂等:一步停删自身旧容器,可重复执行
+            docker rm -f banksys_lixiaohua 2>/dev/null || true
+            docker run -d --name banksys_lixiaohua --restart unless-stopped -p ${PORT}:8888 banksys_lixiaohua:latest
+
+            sleep 5
+            curl -fsS "http://localhost:${PORT}/_stcore/health"
+            echo ""
+            echo ">> 部署成功:http://${{ secrets.SSH_HOST }}:${PORT}/"

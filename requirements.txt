@@ -1,0 +1,6 @@
+# 生产运行依赖(镜像只装这一份)
+streamlit==1.40.1
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.5.1
+plotly==5.22.0
